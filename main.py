@@ -50,4 +50,8 @@ print(neville(points, 0, 3, 2.2))
 
 
 def polynomial(pointsList, X):
+    mat = newMat(len(pointList), len(pointsList))
+    for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            mat[i][j] = pointList[i][0]
     return

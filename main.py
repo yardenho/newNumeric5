@@ -30,8 +30,8 @@ def Linear(PointList, x):
     return y
 
 
-pointList = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
-print(Linear(pointList, 3.666))
+#pointList = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
+#print(Linear(pointList, 3.666))
 
 
 def neville(pointsList, m, n, X):
@@ -43,12 +43,6 @@ def neville(pointsList, m, n, X):
         res = (X - Xm) * neville(pointsList, m+1, n, X) - (X - Xn) * neville(pointsList, m, n-1, X)
         res /= (Xn - Xm)
         return res
-
-
-points = [[1, 1], [2, 4], [3, 9], [4, 16]]
-print(neville(points, 0, 3, 2.2))
-
-
 
 
 # polynomial method
@@ -67,17 +61,86 @@ def newMat(numRow, numCol):
     return mat
 
 
+def iterativGuassSeidel(A, b, epsilon, flagD):
+    """
+    :param A: a matrix
+    :param b: the result vector
+    :param epsilon: the mistake
+    :param flagD: tell us if the system have dominant diagonal
+    :return: None
+    """
+    flagC = False  # flagC = false if the linear equations does not converge
+    x = newMat(len(b), 1)    # create the result vector
+    for _ in range(99):    # max number of iterations is 99
+        oldX1 = x[0][0]    # copy the old x value of the current iteration
+        for i in range(len(x)):   # go over the all variables
+            if A[i][i] == 0:   # preventing division by zero
+                return None
+            temp = b[i][0] / A[i][i]
+            for j in range(len(x)):    # calculate the value of the variable in the new iteration
+                if i != j:
+                    temp -= (A[i][j] * x[j][0]) / A[i][i]
+            x[i][0] = temp     # update the calculated value
+        if abs(oldX1 - x[0][0]) < epsilon:   # check stop condition
+            flagC = True
+            break
+    if flagC is True:
+        return x
+    else:
+        #print("The system of linear equations does not converge :(")
+        return None
+
+
 def polynomial(pointsList, X):
-    mat = newMat(len(pointList), len(pointsList))
+    mat = newMat(len(pointsList), len(pointsList))
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            mat[i][j] = pow(pointList[i][0], j)
+            mat[i][j] = pow(pointsList[i][0], j)
+    b = newMat(len(pointsList), 1)
+    for i in range(len(b)):
+        b[i][0] = pointsList[i][1]
+    matRes = iterativGuassSeidel(mat, b, 0.0001, True)
     # calc mat
     res = 0
     for i in range(len(matRes)):
-        res += matRes[i] * pow(X, i)
+        res += matRes[i][0] * pow(X, i)
     return res
 
 
+points = [[1, 0.8415], [2, 0.9093], [3, 0.1411]]
+print("polynomial")
+#print(polynomial(points, 2.5))
+
+
 def Driver():
-    pass
+    points = [[1, 1], [2, 4], [3, 9], [4, 16]]
+    X = 2.5
+    val = input("Choose the method you interest in finding the approximate value of the point:\n"
+                "1 - for Linear Interpolation\n2- for Polynomial Interpolation\n3 - for Lagrange Interpolation "
+                "\n4 - for Neville Algorithm\nany other number for all the methods\n")
+    if val == "1":
+        print("==== Linear Interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(Linear(points, X)))
+    elif val == "2":
+        print("==== Polynomial interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(polynomial(points, X)))
+    elif val == "3":
+        print("==== Lagrange Interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(Lagrange(points, X)))
+    elif val == "4":
+        print("==== Neville Algorithm ==== ")
+        print("f(" + str(X) + ") = " + str(neville(points, 0, len(points) - 1, X)))
+    else:
+        print("==== All the methods ==== ")
+        print("==== Linear Interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(Linear(points, X)))
+        print("\n==== Polynomial interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(polynomial(points, X)))
+        print("\n==== Lagrange Interpolation ==== ")
+        print("f(" + str(X) + ") = " + str(Lagrange(points, X)))
+        print("\n==== Neville Algorithm ==== ")
+        print("f(" + str(X) + ") = " + str(neville(points, 0, len(points) - 1, X)))
+
+
+
+Driver()

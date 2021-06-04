@@ -113,10 +113,10 @@ print("polynomial")
 
 
 def Driver():
-    points = [[1, 1], [2, 4], [3, 9], [4, 16]]
+    points = [[1, 1], [2, 4], [3, 9]]
     X = 2.5
     val = input("Choose the method you interest in finding the approximate value of the point:\n"
-                "1 - for Linear Interpolation\n2- for Polynomial Interpolation\n3 - for Lagrange Interpolation "
+                "1 - for Linear Interpolation\n2 - for Polynomial Interpolation\n3 - for Lagrange Interpolation "
                 "\n4 - for Neville Algorithm\nany other number for all the methods\n")
     if val == "1":
         print("==== Linear Interpolation ==== ")
@@ -128,8 +128,11 @@ def Driver():
         print("==== Lagrange Interpolation ==== ")
         print("f(" + str(X) + ") = " + str(Lagrange(points, X)))
     elif val == "4":
-        print("==== Neville Algorithm ==== ")
-        print("f(" + str(X) + ") = " + str(neville(points, 0, len(points) - 1, X)))
+        if len(points) >= 4:
+            print("==== Neville Algorithm ==== ")
+            print("f(" + str(X) + ") = " + str(neville(points, 0, len(points) - 1, X)))
+        else:
+            print("can't perform neville algorithm for less than 4 points")
     else:
         print("==== All the methods ==== ")
         print("==== Linear Interpolation ==== ")

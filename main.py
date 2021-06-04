@@ -53,12 +53,30 @@ print(neville(points, 0, 3, 2.2))
 
 # polynomial method
 
+def newMat(numRow, numCol):
+    """
+    :param numRow: the number of rows in the mat
+    :param numCol: the number of columns in the mat
+    :return: a zero matrix in the required size
+    """
+    mat = []   # the zero matrix the function returns
+    for i in range(numRow):
+        mat.append([])    # create a new row
+        for j in range(numCol):
+            mat[i].append(0)    # fill the row with
+    return mat
+
+
 def polynomial(pointsList, X):
     mat = newMat(len(pointList), len(pointsList))
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            mat[i][j] = pointList[i][0]
-    return
+            mat[i][j] = pow(pointList[i][0], j)
+    # calc mat
+    res = 0
+    for i in range(len(matRes)):
+        res += matRes[i] * pow(X, i)
+    return res
 
 
 def Driver():

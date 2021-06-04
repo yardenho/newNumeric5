@@ -57,9 +57,9 @@ def polynomial(pointsList, X):
     mat = newMat(len(pointList), len(pointsList))
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            mat[i][j] = pow(pointList[i][0], j)
-    # calc mat
-    res = 0
-    for i in range(len(matRes)):
-        res += matRes[i] * pow(X, i)
-    return res
+            mat[i][j] = pointList[i][0]
+    return
+
+
+def Driver():
+    pass

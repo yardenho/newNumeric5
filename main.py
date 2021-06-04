@@ -1,17 +1,37 @@
 def Lagrange(PointList, x):
     i = 0
+    sum = 0
     while i < len(PointList):
-        j=0
-        sum = 0
+        j = 0
         L = 1
         while j < len(PointList):
             if i is not j:
                 L *= (x - PointList[j][0]) / (PointList[i][0] - PointList[j][0])
-        sum += L
+            j += 1
+        sum += (L * PointList[i][1])
+        i += 1
     return sum
 
-pointList = [[1, 1], [2, 0], [4, 1.5]]
+
+#pointList = [[1, 1], [2, 0], [4, 1.5]]
 #print(Lagrange(pointList, 3))
+
+def Linear(PointList, x):
+    i = 0
+    y = None
+    while i < len(PointList) - 1:
+        if (x > PointList[i][0]) and (x < PointList[i+1][0]):
+            Xi = PointList[i][0]
+            XiNext = PointList[i + 1][0]
+            Yi = PointList[i][1]
+            YiNext = PointList[i + 1][1]
+            y = (((Yi - YiNext) / (Xi - XiNext)) * x) + (((YiNext * Xi) - (Yi * XiNext)) / (Xi - XiNext))
+        i += 1
+    return y
+
+
+pointList = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
+print(Linear(pointList, 3.666))
 
 
 def neville(pointsList, m, n, X):

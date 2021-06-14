@@ -1,4 +1,8 @@
 """
+    git:
+"""
+
+"""
 Team - members:
 Yarden Hovav, 318230653
 Chen Ben Tolila, 207278029
@@ -49,25 +53,25 @@ def Linear(PointList, x):
     return y
 
 
-"""       *** Lagrange ****       """
+"""       *** Neville ****       """
 
 
 def neville(pointsList, m, n, X):
     """
     :param pointsList: a list of points
-    :param m:
-    :param n:
-    :param X:
-    :return:
+    :param m: the start point index
+    :param n: the end point index
+    :param X: an x value for it we want to find the y value in the function that is created from the given points
+    :return: a proximity of f(x)
     """
-    if m is n:
-        return pointsList[m][1]
+    if m is n:  # the start index and end index are the same (the same point)
+        return pointsList[m][1]   # return the y value of the point
     else:
-        Xm = pointsList[m][0]
-        Xn = pointsList[n][0]
+        Xm = pointsList[m][0]  # the start point x value
+        Xn = pointsList[n][0]  # the end point x value
         res = (X - Xm) * neville(pointsList, m+1, n, X) - (X - Xn) * neville(pointsList, m, n-1, X)
         res /= (Xn - Xm)
-        return res
+        return res   # the result (f(X))
 
 
 # polynomial method
@@ -109,9 +113,10 @@ def iterativGuassSeidel(A, b, epsilon, flagD):
         if abs(oldX1 - x[0][0]) < epsilon:   # check stop condition
             flagC = True
             break
-    if flagC is True:
+    if flagC is True:  # linear equations does converge
         return x
     else:
+        print("no result when using iterative Guass Seidel in order to solve the matrix")
         return None
 
 
@@ -122,55 +127,61 @@ def copyMat(A):
     :param A: a matrix
     :return: a copy of the matrix
     """
-    B = newMat(len(A), len(A[0]))
-    for i in range(len(A)):
+    B = newMat(len(A), len(A[0]))  # create a zero matrix of the same size as A
+    for i in range(len(A)):   # copy A
         for j in range(len(A[0])):
             B[i][j] = A[i][j]
     return B
 
 
 def createDominantDiagonal(A, b=None):
-    max = 0
-    maxIndex = 0
-    sum = 0
-    for i in range (len(A)):
-        for j in range(len(A)):
-            sum += abs(A[i][j])
-            if abs(A[i][j]) > max:
+    """
+    :param A: a coefficients matrix
+    :param b: the column vector of constant terms.
+    :return: matrix A with dominant diagonal
+    """
+    max = 0   # the max value in the current row or column in the matrix
+    maxIndex = 0  # the index of the max value
+    for i in range((len(A))):  # calc the max value for each member on the main diagonal
+        sum = 0  # the sum of the members in the current row in A
+        for j in range(len(A)):  # go over the current row
+            sum += abs(A[i][j])   # add the value of each member in the row
+            if abs(A[i][j]) > max:   # search for the max value in the current row
                 max = abs(A[i][j])
                 maxIndex = j
-        if (sum - max) <= max:
-            A = manualSwapCol(A , maxIndex, i)
-        else:
+        if (sum - max) <= max:   # if the max value in the row meets the condition of a dominant diagonal
+            A = manualSwapCol(A, maxIndex, i)   # swap between the columns of the current value on the main diagonal and the max value in that row
+        else:  # look for the max value in the current column
             max = 0
             maxIndex = 0
-            for j in range(len(A)):
-                sum += abs(A[j][i])
-                if abs(A[j][i]) > max:
+            for j in range(len(A)):   # go over the current column
+                # sum += abs(A[j][i])
+                if abs(A[j][i]) > max:  # search for the max value in the current column
                     max = abs(A[j][i])
                     maxIndex = j
-            if rowSum(A[j]) - max <= max:
-                A, b = manualSwapRow(A,b, i, maxIndex)
+            if rowSum(A[j]) - max <= max:    # if the max value in the row meets the condition of a dominant diagonal
+                A, b = manualSwapRow(A, b, i, maxIndex)   # swap between the rows of the current value on the main diagonal and the max value in that column
             else:
-                print("ERROR - no dominant diagonal")
+                print("No dominant diagonal")   # A can't be changed into dominant diagonal matrix
                 return None, None
     return A, b
+
 
 def manualSwapRow(a, b, r1, r2):
     """
     manaul rows exchange (without e)
-    :param a:
-    :param b:
-    :param r1:
-    :param r2:
-    :return:
+    :param a: The coefficient matrix
+    :param b:  The column vector of constant terms
+    :param r1: the first row to swap
+    :param r2: the second row to swap
+    :return: the matrix after the swap, The column vector of constant terms after swap
     """
 
     if r2 < len(a) and r1 < len(a):
         temp = a[r1]
         a[r1] = a[r2]
         a[r2] = temp
-        if b is not None:
+        if b is not None:  # if the result vector is not none swap him too
             temp = b[r1]
             b[r1] = b[r2]
             b[r2] = temp
@@ -178,12 +189,19 @@ def manualSwapRow(a, b, r1, r2):
 
 
 def manualSwapCol(a, c1, c2):
+    """
+    :param a: The coefficient matrix
+    :param c1: the first column to swap
+    :param c2: the second column to swap
+    :return: the matrix after the swap
+    """
     if c2 < len(a) and c1 < len(a):
         for i in range(len(a)):
             temp = a[i][c1]
             a[i][c1] = a[i][c2]
             a[i][c2] = temp
     return a
+
 
 def rowSum(line):
     """
@@ -199,44 +217,47 @@ def rowSum(line):
 
 
 def polynomial(pointsList, X):
+    """
+    :param pointsList: the list of the points
+    :param X: the point that we want to find her approximate value
+    :return: the approximate value of X
+    """
     mat = newMat(len(pointsList), len(pointsList))
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            mat[i][j] = pow(pointsList[i][0], j)
+            mat[i][j] = pow(pointsList[i][0], j)  # The coefficient matrix
     b = newMat(len(pointsList), 1)
     for i in range(len(b)):
-        b[i][0] = pointsList[i][1]
+        b[i][0] = pointsList[i][1]  # The column vector of constant terms
     # check
     copyM = copyMat(mat)
     copyB = copyMat(b)
-    copyM, copyB = createDominantDiagonal(copyM, copyB)
-    if (copyM is not None) and (copyB is not None):
+    copyM, copyB = createDominantDiagonal(copyM, copyB)  # change the matrix to be with dominant diagonal
+    if (copyM is not None) and (copyB is not None):  # check if the return matrices are not none
         mat = copyM
         b = copyB
-    #
-    matRes = iterativGuassSeidel(mat, b, 0.0001, True)
+    # end check
+    matRes = iterativGuassSeidel(mat, b, 0.0001, True)  # returns the solution matrix
     # calc mat
-    res = 0
-    for i in range(len(matRes)):
-        res += matRes[i][0] * pow(X, i)
-    return res
-
-
-points = [[1, 0.8415], [2, 0.9093], [3, 0.1411]]
-print("polynomial")
-#print(polynomial(points, 2.5))
+    if matRes is not None:
+        res = 0
+        for i in range(len(matRes)):
+            res += matRes[i][0] * pow(X, i)  # calc the y value for the requested x
+        return res
+    return None
 
 
 def Driver():
-    points = [[0, 0],
-              [1, 0.8415],
-              [2, 0.9093],
-              [3, 0.1411],
-              [4, -0.7568],
-              [5, -0.9589],
-              [6, -0.2794]]
-    #points = [[1, 1], [2, 4], [3, 9]]
-    X = 2.5
+    # points = [[0, 0],
+    #           [1, 0.8415],
+    #           [2, 0.9093],
+    #           [3, 0.1411],
+    #           [4, -0.7568],
+    #           [5, -0.9589],
+    #           [6, -0.2794]]
+    # X = 2.5
+    points = [[0, 0], [1, 1], [2, 4], [3, 9]]
+    X = 1.5
     val = input("Choose the method you interest in finding the approximate value of the point:\n"
                 "1 - for Linear Interpolation\n2 - for Polynomial Interpolation\n3 - for Lagrange Interpolation "
                 "\n4 - for Neville Algorithm\nany other number for all the methods\n")
